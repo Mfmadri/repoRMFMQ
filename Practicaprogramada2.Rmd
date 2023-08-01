@@ -18,6 +18,8 @@ library(DBI)
 library(lubridate)
 library(gt)
 library(leaflet)
+library(openxlsx)
+
 ```
 
 #Instrucciones:
@@ -132,11 +134,23 @@ f. Escriba el código que exporte los datos en un excel, de tal manera que cada 
 los datos de una categoría de AQI. (Es decir una pestaña para las ciudades cuya categoría es “Good”
 o “Buena”, otra para los que la categoría es “Moderate” y así para cada cateoría). (5pts)
 ```{r}
+library(openxlsx)
+
+
 categorias_aqi <- unique(datos$`AQI Category`)
 
+
+ruta_archivo <- "datos_por_categorias_aqi.xlsx"
+wb <- createWorkbook()
+
+
 for (categoria in categorias_aqi) {
-  datos_categoria <- datos[datos$`AQI Category` == categoria, ]
-    write_xlsx(datos_categoria, path = paste0("datos_", categoria, ".xlsx"))
+  datos_categoria <- datos %>% filter(`AQI Category` == categoria)
+  addWorksheet(wb, sheetName = categoria)
+  writeData(wb, sheet = categoria, x = datos_categoria)
 }
+
+
+
 
 ```
